@@ -10,7 +10,7 @@ If you are looking for a jQuery plugin, head over to: [desandro/imagesloaded](ht
 ## Calling
 
 ```js
-imagesLoaded( container, callback, [ progress ] );
+imagesLoaded( container, [ callback, [ progress ] ] );
 ```
 
 ### container `Mixed`
@@ -18,11 +18,11 @@ imagesLoaded( container, callback, [ progress ] );
 Can be `null`, or `NodeList`/`Array` of images/elements. That means that you can pass an element that contains images,
 directly images, or combination of both.
 
-### callback `Function`
+### [ callback ] `Function`
 
 Callback function is executed when all images has finished with loading, regardless of their final state (properly loaded, or broken).
 
-**this** (callback function scope) is a `container` passed as a first argument.
+***this*** (callback function scope) is a `container` passed as a first argument.
 
 Receives 3 arguments:
 
@@ -30,11 +30,11 @@ Receives 3 arguments:
 + **proper:** `Array` with properly loaded images.
 + **broken:** `Array` with broken images.
 
-### progress `Function`
+### [ progress ] `Function`
 
 Progress function is executed for every image that has finished with loading.
 
-*this* (progress function scope) is an image node that has just finished with loading.
+***this*** (progress function scope) is an image node that has just finished with loading.
 
 Receives 5 arguments:
 
