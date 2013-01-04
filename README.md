@@ -5,6 +5,8 @@ A small library that triggers a callback after all the selected/child images hav
 
 This library has no dependencies.
 
+If you are looking for a jQuery plugin, head over to: [desandro/imagesloaded](https://github.com/desandro/imagesloaded).
+
 ## Calling
 
 ```js
@@ -20,11 +22,7 @@ directly images, or combination of both.
 
 Callback function is executed when all images has finished with loading, regardless of their final state (properly loaded, or broken).
 
-##### *this*
-
-The callback function scope (`this`) is a `container` passed as a first argument.
-
-##### arguments
+**this** (callback function scope) is a `container` passed as a first argument.
 
 Receives 3 arguments:
 
@@ -34,17 +32,13 @@ Receives 3 arguments:
 
 ### progress
 
-Progress function is executed for every image that has just finished with loading.
+Progress function is executed for every image that finished with loading.
 
-##### *this*
-
-`this` is an image node that has just finished with loading.
-
-##### arguments
+*this* (progress function scope) is an image node that has just finished with loading.
 
 Receives 5 arguments:
 
-+ **isBroken:** `Boolean` state of image. It is true when image has failed to load.
++ **isBroken:** `Boolean` state of an image. It is true when image has failed to load.
 + **images:** `Array` with all images in `container`.
 + **loaded:** `Array` with all currently loaded images.
 + **proper:** `Array` with all currently loaded proper images.
