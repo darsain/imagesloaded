@@ -13,12 +13,12 @@ If you are looking for a jQuery plugin, head over to: [desandro/imagesloaded](ht
 imagesLoaded( container, callback, [ progress ] );
 ```
 
-### container
+### container `Mixed`
 
-Can be null, or NodeList/Array of images/elements. That means that you can pass an element that contains images,
+Can be `null`, or `NodeList`/`Array` of images/elements. That means that you can pass an element that contains images,
 directly images, or combination of both.
 
-### callback
+### callback `Function`
 
 Callback function is executed when all images has finished with loading, regardless of their final state (properly loaded, or broken).
 
@@ -30,9 +30,9 @@ Receives 3 arguments:
 + **proper:** `Array` with properly loaded images.
 + **broken:** `Array` with broken images.
 
-### progress
+### progress `Function`
 
-Progress function is executed for every image that finished with loading.
+Progress function is executed for every image that has finished with loading.
 
 *this* (progress function scope) is an image node that has just finished with loading.
 
