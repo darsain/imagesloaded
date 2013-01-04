@@ -187,4 +187,41 @@ describe('imagesLoaded', function () {
 			}
 		});
 	});
+
+	describe('caching', function () {
+		it('should properly cache state of images to speed up future calls', function () {
+			$images.each(function (i, image) {
+				expect($(image).is('.broken')).to.equal(image.imagesLoaded.isBroken);
+			});
+		});
+
+		it('should use cached state of images, and next call on the same container execute immediately (this test is unreliable)', function () {
+			var spy = chai.spy();
+			imagesLoaded(container, null, spy);
+			expect(spy).to.be.called();
+		});
+
+		it('should ignore cache if image src has changed', function (done) {
+			var image = document.createElement('img'),
+				oldHeight = 100,
+				newHeight = 400,
+				oldSrc = 'http://lorempixel.com/100/'+oldHeight,
+				newSrc = 'http://lorempixel.com/100/'+newHeight;
+
+			image.src = oldSrc;
+
+			imagesLoaded(image, function () {
+				image.src = newSrc;
+				imagesLoaded(image, function () {
+					expect(image.imagesLoaded.src).to.equal(image.src);
+					expect(image.height).to.equal(newHeight);
+					done();
+				});
+			});
+		});
+	});
+
+	describe('cleanup', function () {
+		it('should remove all event listeners attached in determination process (can\'t be tested with current W3C events model)');
+	});
 });
