@@ -37,17 +37,17 @@
 			loaded = [],
 			proper = [],
 			broken = [],
-			elements;
+			collection;
 
 		if (container) {
-			elements = inArray(type(container), ['array', 'nodelist']) ? container : [container];
+			collection = toArray(container);
 
 			// Extract images
-			for (var c = 0, cl = elements.length; c < cl; c++) {
-				if (elements[c].nodeName === 'IMG') {
-					images.push(elements[c]);
-				} else if (elements[c].nodeType === Node.ELEMENT_NODE) {
-					images = images.concat(nodeListToArray(elements[c].getElementsByTagName('img')));
+			for (var c = 0, cl = collection.length; c < cl; c++) {
+				if (collection[c].nodeName === 'IMG') {
+					images.push(collection[c]);
+				} else if (collection[c].nodeType === Node.ELEMENT_NODE) {
+					images = images.concat(toArray(collection[c].getElementsByTagName('img')));
 				}
 			}
 		}
@@ -167,22 +167,45 @@
 	};
 
 	/**
-	 * Convert nodeList to array.
+	 * Return type of the value.
 	 *
-	 * @param  {NodeList} nodeList
+	 * @param  {Mixed} value
 	 *
-	 * @return {Array}
+	 * @return {String}
 	 */
-	function nodeListToArray(nodeList) {
-		var arr = [];
-		for (var i = nodeList.length >>> 0; i--;) {
-			arr[i] = nodeList[i];
-		}
-		return arr;
+	function type(value) {
+		return Object.prototype.toString.call(value).match(/^\[object ([a-z]+)\]$/i)[1].toLowerCase();
 	}
 
 	/**
-	 * Check whether value is in array.
+	 * Convert array-like objects into an array.
+	 *
+	 * @param  {Mixed} collection
+	 *
+	 * @return {Array}
+	 */
+	function toArray(collection) {
+		switch (type(collection)) {
+			case 'array':
+				return collection;
+			case 'undefined':
+				return [];
+			case 'nodelist':
+			case 'arguments':
+				var arr = [];
+				for (var i = 0, l = collection.length; i < l; i++) {
+					if (collection.hasOwnProperty(i) || i in collection) {
+						arr.push(collection[i]);
+					}
+				}
+				return arr;
+			default:
+				return [collection];
+		}
+	}
+
+	/**
+	 * Check whether the value is in an array.
 	 *
 	 * @param  {Mixed} value
 	 * @param  {Array} array
@@ -190,7 +213,7 @@
 	 * @return {Boolean}
 	 */
 	function inArray(value, array) {
-		if (!array) {
+		if (type(value) !== 'array') {
 			return false;
 		}
 
@@ -207,17 +230,6 @@
 	}
 
 	/**
-	 * Return type of the value.
-	 *
-	 * @param  {Mixed} value
-	 *
-	 * @return {String}
-	 */
-	function type(value) {
-		return Object.prototype.toString.call(value).match(/^\[object ([a-z]+)\]$/i)[1].toLowerCase() || "object";
-	}
-
-	/**
 	 * Add event listeners to element.
 	 *
 	 * @param  {Node}     element
@@ -227,14 +239,7 @@
 	 * @return {Void}
 	 */
 	function bind(element, eventName, handler) {
-		var events = eventName.split(' ');
-		for (var i = 0, l = events.length; i < l; i++) {
-			if (element.addEventListener) {
-				element.addEventListener(events[i], handler, false);
-			} else if (element.attachEvent) {
-				element.attachEvent('on' + events[i], handler);
-			}
-		}
+		listener(element, eventName, handler);
 	}
 
 	/**
@@ -247,13 +252,27 @@
 	 * @return {Void}
 	 */
 	function unbind(element, eventName, handler) {
+		listener(element, eventName, handler, 1);
+	}
+
+	/**
+	 * Manage element event listeners.
+	 *
+	 * @param  {Node}     element
+	 * @param  {Event}    eventName
+	 * @param  {Function} handler
+	 * @param  {Bool}     remove
+	 *
+	 * @return {Void}
+	 */
+	function listener(element, eventName, handler, remove) {
 		var events = eventName.split(' ');
 		for (var i = 0, l = events.length; i < l; i++) {
-			if (element.removeEventListener) {
-				element.removeEventListener(events[i], handler, false);
-			} else if (element.detachEvent) {
-				element.detachEvent('on' + events[i], handler);
+			if (element.addEventListener) {
+				element[remove ? 'removeEventListener' : 'addEventListener'](events[i], handler, false);
+			} else if (element.attachEvent) {
+				element[remove ? 'detachEvent' : 'attachEvent']('on' + events[i], handler);
 			}
 		}
 	}
-})(window);
+}(window));
