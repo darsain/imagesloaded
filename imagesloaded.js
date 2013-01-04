@@ -191,6 +191,7 @@
 			case 'undefined':
 				return [];
 			case 'nodelist':
+			case 'htmlcollection':
 			case 'arguments':
 				var arr = [];
 				for (var i = 0, l = collection.length; i < l; i++) {
