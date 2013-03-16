@@ -174,7 +174,7 @@
 	 * @return {String}
 	 */
 	function type(value) {
-		return Object.prototype.toString.call(value).match(/^\[object ([a-z]+)\]$/i)[1].toLowerCase();
+		return {}.toString.call(value).match(/\s([a-z]+)/i)[1].toLowerCase();
 	}
 
 	/**
