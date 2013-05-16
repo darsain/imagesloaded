@@ -1,8 +1,6 @@
-# imagesLoaded
+# ImagesLoaded
 
-A small library for DOM images loading state notifications.
-
-This library has no dependencies.
+A small dependency-less library for DOM images loading state notifications.
 
 If you are looking for a jQuery plugin, head over to: [desandro/imagesloaded](https://github.com/desandro/imagesloaded).
 
@@ -21,7 +19,7 @@ image elements, directly image elements, or combination of both.
 
 Object with ImagesLoaded options.
 
-### Options
+## Options
 
 Default options are stored in the `ImagesLoaded.defaults` object.
 
@@ -30,8 +28,7 @@ Default options are stored in the `ImagesLoaded.defaults` object.
 Type: `Integer`
 Default: `10000`
 
-Maximum time in milliseconds in which images have to load, otherwise ImagesLoaded will consider them as broken, and will
-terminate the determination process.
+Maximum time in milliseconds in which images have to load, otherwise they will be marked as broken.
 
 Timer starts on ImagesLoaded object creation, i.e. when you call
 
@@ -47,9 +44,11 @@ var il = new ImagesLoaded(collection);
 il.done( fn );
 ```
 
-Adds a callback to the `done` event. This callback will be executed only when all images finished with loading
+Adds a callback to the `done` event. This callback will be executed only when all images has finished with loading
 successfully. If there is one or more broken images (or if any image loading will take longer than `options.timeout`),
-this callback will not fire.
+this callback will not be executed.
+
+You can add more callbacks by calling this method multiple times.
 
 Callback receives `ImagesLoading` instance object as its `this` value.
 
@@ -62,6 +61,8 @@ il.fail( fn );
 Adds a callback to the `fail` event. This callback will be executed only if there is at least one or more broken images,
 or if any image loading took longer than `options.timeout`.
 
+You can add more callbacks by calling this method multiple times.
+
 Callback receives `ImagesLoading` instance object as its `this` value.
 
 ### always
@@ -73,6 +74,8 @@ il.always( fn );
 Adds a callback to the `always` event. This callback will be executed when all images has finished with loading,
 regardless of their state (properly loaded, or broken).
 
+You can add more callbacks by calling this method multiple times.
+
 Callback receives `ImagesLoading` instance object as its `this` value.
 
 ### progress
@@ -82,6 +85,8 @@ il.progress( fn );
 ```
 
 Adds a callback to the `progress` event. This callback will be executed for each image when it finished with loading.
+
+You can add more callbacks by calling this method multiple times.
 
 Callback receives `ImagesLoading` instance object as its `this` value.
 
@@ -106,7 +111,7 @@ Assuming:
 
 ```js
 var il = new ImagesLoaded(collection);
-// Access property
+// Accessing property
 var foo = il.propertyname;
 ```
 
@@ -136,15 +141,15 @@ Boolean flag which is `true` when there are still some images to load.
 
 ### isDone
 
-Boolean flag which is `true` when loading is done with all images successfully loaded.
+Boolean flag which is `true` when loading is done, and all images have loaded successfully.
 
 ### isFailed
 
-Boolean flag which is `true` when loading is done with some broken images.
+Boolean flag which is `true` when loading is done with some or all images broken.
 
 ## Usage
 
-Using callback binding methods.
+Using callback binding methods:
 
 ```js
 var imgLoading = ImagesLoaded(document);
@@ -182,7 +187,7 @@ imgLoading.progress(function (img, isBroken) {
 });
 ```
 
-All methods return ImagesLoaded object, so you can chain them:
+All methods return ImagesLoaded object, so you can easily chain them:
 
 ```js
 ImagesLoaded(document).done(fn).fail(fn).fail(fn);
