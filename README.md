@@ -38,6 +38,8 @@ var il = new ImagesLoaded(collection);
 
 ## Methods
 
+These methods register callbacks to ImagesLoaded events.
+
 ### done
 
 ```js
@@ -101,6 +103,29 @@ Example:
 il.progress(function (image, isBroken) {
 	image.style.borderColor = isBroken ? 'red' : 'green';
 })
+```
+
+---
+
+All methods above are retroactive, even the `.progress()` method. That means you can call them even after everything
+has been decided, and you'll get what you'd expect - callback will be fired immediately with the same context &
+arguments as if it was bound beforehand.
+
+Example:
+
+```js
+var il = new ImagesLoaded(collection);
+
+il.done(function () {
+	// This callback be executed when images will finish with loading
+	il.done(function () {
+		// This will be executed immediately
+	});
+	il.progress(function (image, isBroken) {
+		// This will be executed immediately for every image that has
+		// finished with loading, in the exact order when that happened.
+	});
+});
 ```
 
 ## Properties
