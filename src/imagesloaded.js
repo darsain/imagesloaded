@@ -218,96 +218,98 @@
 			}
 		}
 
+		// Private variables
+		var self = this instanceof ImagesLoaded ? this : {};
 		var callbacks = new Callbacks();
 		var tIndex;
 
-		var instance = {
-			images: [],
-			loaded: [],
-			pending: [],
-			proper: [],
-			broken: [],
+		// Element holders
+		self.images = [];
+		self.loaded = [];
+		self.pending = [];
+		self.proper = [];
+		self.broken = [];
 
-			isPending: true,
-			isDone: false,
-			isFailed: false,
-
-			/**
-			 * Registers or executes callback for done state.
-			 *
-			 * @param  {Function} callback
-			 *
-			 * @return {ImagesLoaded}
-			 */
-			done: function (callback) {
-				if (instance.isPending) {
-					callbacks.on('done', callback);
-				} else if (instance.isDone && type(callback) === 'function') {
-					callback.call(instance);
-				}
-				return instance;
-			},
-
-			/**
-			 * Registers or executes callback for fail state.
-			 *
-			 * @param  {Function} callback
-			 *
-			 * @return {ImagesLoaded}
-			 */
-			fail: function (callback) {
-				if (instance.isPending) {
-					callbacks.on('fail', callback);
-				} else if (instance.isFailed && type(callback) === 'function') {
-					callback.call(instance);
-				}
-				return instance;
-			},
-
-			/**
-			 * Registers or executes callback for done state.
-			 *
-			 * @param  {Function} callback
-			 *
-			 * @return {ImagesLoaded}
-			 */
-			always: function (callback) {
-				if (instance.isPending) {
-					callbacks.on('always', callback);
-				} else if (type(callback) === 'function') {
-					callback.call(instance);
-				}
-				return instance;
-			},
-
-			/**
-			 * Registers or executes callback for done state.
-			 *
-			 * @param  {Function} callback
-			 *
-			 * @return {ImagesLoaded}
-			 */
-			progress: function (callback) {
-				if (instance.isPending) {
-					callbacks.on('progress', callback);
-				}
-				// Retroactivity
-				for (var i = 0, l = instance.loaded.length; i < l; i++) {
-					callback.call(instance, instance.loaded[i], instance.loaded[i][ILID].isBroken);
-				}
-				return instance;
-			}
-		};
+		// States
+		self.isPending = true;
+		self.isDone = false;
+		self.isFailed = false;
 
 		// Extract images
 		collection = toArray(collection);
 		for (var c = 0, cl = collection.length; c < cl; c++) {
 			if (collection[c].nodeName === 'IMG') {
-				instance.images.push(collection[c]);
+				self.images.push(collection[c]);
 			} else if (inArray(collection[c].nodeType, ALLOWED_NODE_TYPES) !== -1) {
-				instance.images = instance.images.concat(toArray(collection[c].getElementsByTagName('img')));
+				self.images = self.images.concat(toArray(collection[c].getElementsByTagName('img')));
 			}
 		}
+
+		/**
+		 * Registers or executes callback for done state.
+		 *
+		 * @param  {Function} callback
+		 *
+		 * @return {ImagesLoaded}
+		 */
+		self.done = function (callback) {
+			if (self.isPending) {
+				callbacks.on('done', callback);
+			} else if (self.isDone && type(callback) === 'function') {
+				callback.call(self);
+			}
+			return self;
+		};
+
+		/**
+		 * Registers or executes callback for fail state.
+		 *
+		 * @param  {Function} callback
+		 *
+		 * @return {ImagesLoaded}
+		 */
+		self.fail = function (callback) {
+			if (self.isPending) {
+				callbacks.on('fail', callback);
+			} else if (self.isFailed && type(callback) === 'function') {
+				callback.call(self);
+			}
+			return self;
+		};
+
+		/**
+		 * Registers or executes callback for done state.
+		 *
+		 * @param  {Function} callback
+		 *
+		 * @return {ImagesLoaded}
+		 */
+		self.always = function (callback) {
+			if (self.isPending) {
+				callbacks.on('always', callback);
+			} else if (type(callback) === 'function') {
+				callback.call(self);
+			}
+			return self;
+		};
+
+		/**
+		 * Registers or executes callback for done state.
+		 *
+		 * @param  {Function} callback
+		 *
+		 * @return {ImagesLoaded}
+		 */
+		self.progress = function (callback) {
+			if (self.isPending) {
+				callbacks.on('progress', callback);
+			}
+			// Retroactivity
+			for (var i = 0, l = self.loaded.length; i < l; i++) {
+				callback.call(self, self.loaded[i], self.loaded[i][ILID].isBroken);
+			}
+			return self;
+		};
 
 		/**
 		 * Executes proper callbacks when all images has finished with loading.
@@ -315,18 +317,18 @@
 		 * @return {Void}
 		 */
 		function doneLoading() {
-			if (!instance.isPending) {
+			if (!self.isPending) {
 				return;
 			}
 			// Clear timeout
 			clearTimeout(tIndex);
 			// Mark states
-			instance.isPending = false;
-			instance.isDone = instance.images.length === instance.proper.length;
-			instance.isFailed = !instance.isDone;
+			self.isPending = false;
+			self.isDone = self.images.length === self.proper.length;
+			self.isFailed = !self.isDone;
 			// Trigger callbacks
-			callbacks.trigger(instance.isDone ? 'done' : 'fail', instance);
-			callbacks.trigger('always', instance);
+			callbacks.trigger(self.isDone ? 'done' : 'fail', self);
+			callbacks.trigger('always', self);
 		}
 
 		/**
@@ -336,8 +338,8 @@
 		 */
 		function terminate() {
 			// Mark still pending images as broken
-			while (instance.pending.length) {
-				imgLoaded(instance.pending[0], 1);
+			while (self.pending.length) {
+				imgLoaded(self.pending[0], 1);
 			}
 		}
 
@@ -356,7 +358,7 @@
 			// Leave the temporary image for garbage collection
 			this[ILID].tmpImg = null;
 			// Don't proceed if image is already loaded
-			if (inArray(this, instance.loaded) === -1) {
+			if (inArray(this, self.loaded) === -1) {
 				imgLoaded(this, event.type !== 'load');
 			}
 		}
@@ -370,23 +372,23 @@
 		 * @return {Void}
 		 */
 		function imgLoaded(img, isBroken) {
-			var pendingIndex = inArray(img, instance.pending);
+			var pendingIndex = inArray(img, self.pending);
 			if (pendingIndex === -1) {
 				return;
 			} else {
-				instance.pending.splice(pendingIndex, 1);
+				self.pending.splice(pendingIndex, 1);
 			}
 			// Store element in loaded images array
-			instance.loaded.push(img);
+			self.loaded.push(img);
 			// Keep track of broken and properly loaded images
-			instance[isBroken ? 'broken' : 'proper'].push(img);
+			self[isBroken ? 'broken' : 'proper'].push(img);
 			// Cache image state for future calls
 			img[ILID].isBroken = isBroken;
 			img[ILID].src = img.src;
 			// Trigger progress callback
-			callbacks.trigger('progress', instance, img, isBroken);
+			callbacks.trigger('progress', self, img, isBroken);
 			// Call doneLoading
-			if (instance.images.length === instance.loaded.length) {
+			if (self.images.length === self.loaded.length) {
 				setTimeout(doneLoading);
 			}
 		}
@@ -398,17 +400,17 @@
 		 */
 		function check() {
 			// If no images, trigger immediately
-			if (!instance.images.length) {
+			if (!self.images.length) {
 				doneLoading();
 				return;
 			}
 			// Actually check the images
 			var img;
-			for (var i = 0, il = instance.images.length; i < il; i++) {
-				img = instance.images[i];
+			for (var i = 0, il = self.images.length; i < il; i++) {
+				img = self.images[i];
 				img[ILID] = img[ILID] || {};
 				// Add image to pending array
-				instance.pending.push(img);
+				self.pending.push(img);
 				// Find out whether this image has been already checked for status.
 				// If it was, and src has not changed, call imgLoaded.
 				if (img[ILID].isBroken !== undefined && img[ILID].src === img.src) {
@@ -433,7 +435,7 @@
 		// Set the timeout
 		setTimeout(terminate, options.timeout);
 		// Return the instance
-		return instance;
+		return self;
 	}
 
 	// Default options
