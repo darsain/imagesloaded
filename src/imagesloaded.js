@@ -386,7 +386,9 @@
 			img[ILID].isBroken = isBroken;
 			img[ILID].src = img.src;
 			// Trigger progress callback
-			callbacks.trigger('progress', self, img, isBroken);
+			setTimeout(function () {
+				callbacks.trigger('progress', self, img, isBroken);
+			});
 			// Call doneLoading
 			if (self.images.length === self.loaded.length) {
 				setTimeout(doneLoading);
