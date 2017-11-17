@@ -354,7 +354,7 @@
 			/*jshint validthis:true */
 			event = event || w.event;
 			// Unbind loaded handler from temporary image
-			unbind(this[ILID].tmpImg, EVENTS, imgLoadedHandler);
+			unbind(this[ILID].tmpImg || {}, EVENTS, imgLoadedHandler);
 			// Leave the temporary image for garbage collection
 			this[ILID].tmpImg = null;
 			// Don't proceed if image is already loaded
